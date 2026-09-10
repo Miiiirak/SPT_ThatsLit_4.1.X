@@ -1,4 +1,4 @@
-﻿using BepInEx;
+using BepInEx;
 using BepInEx.Bootstrap;
 using BepInEx.Configuration;
 using DrakiaXYZ.VersionChecker;
@@ -18,16 +18,16 @@ namespace ThatsLit
         public const string Configuration = SPTVersion;
         public const string Company = "";
         public const string Product = ModName;
-        public const string Copyright = "Copyright © 2024 BA";
+        public const string Copyright = "Copyright \u00a9 2024 BA";
         public const string Trademark = "";
         public const string Culture = "";
 
-        public const int TarkovVersion = 33420;
+        public const int TarkovVersion = 40743;
         public const string EscapeFromTarkov = "EscapeFromTarkov.exe";
         public const string ModName = "That's Lit";
         public const string ModVersion = "1.3100.3";
         public const string SPTGUID = "com.SPT.core";
-        public const string SPTVersion = "3.10.0";
+        public const string SPTVersion = "4.1.0";
         private static long modVersionComparable;
 
         public static long ModVersionComparable
@@ -95,7 +95,7 @@ namespace ThatsLit
                 && EnabledLighting.Value
                 && !Chainloader.PluginInfos.ContainsKey("bastudio.thatslit.sync"))
                 {
-                    string message = $"[That's Lit] Fika detected, but That's Lit Sync is not installed. Without the extension, you lose extra fps per player. Get Sync from Fika Discord - #mod-releases - That's Lit. Direct link is provided in the console (`).";
+                    string message = $"[That's Lit] Fika detected, but That's Lit Sync is not installed. Without the extension, you lose extra fps per player. Get Sync from Fika Discord - #mod-releases - That's Lit. Direct link is provided in the console (`)."; 
                     EFT.UI.ConsoleScreen.Log($"That's Lit Sync: https://discord.com/channels/1202292159366037545/1245739513481924739");
                     NotificationManagerClass.DisplayWarningNotification(message, EFT.Communications.ENotificationDurationType.Infinite);
                     Logger.LogError(message);
@@ -140,7 +140,6 @@ namespace ThatsLit
 
             category = "1. Main";
             EnabledMod = Config.Bind(category, "Enable", true, "Enable the mod. Some features can't be re-enabled in raids.");
-            //ScoreOffset = Config.Bind(category, "Score Offset", 0f, "Modify the score ranging from -1 to 1, which reflect how much the player is lit. Starting from -0.4 a
 
             category = "2. Darkness / Brightness";
             EnabledLighting            = Config.Bind(category, "Enable", true, new ConfigDescription("Enable the module. With this turned off, AIs are not affected by your brightness.", null, new ConfigurationManagerAttributes() { Order                                                              = 101 }));
@@ -157,8 +156,6 @@ namespace ThatsLit
             EnableCustoms              = Config.Bind(category, "Customs", true, "Enable darkness/brightness on the map.");
             EnableStreets              = Config.Bind(category, "Streets", true, "Enable darkness/brightness on the map.");
             EnableGroundZero              = Config.Bind(category, "Ground Zero", true, "Enable darkness/brightness on the map.");
-            // EnableLab              = Config.Bind(category, "Lab", false, "Enable darkness/brightness on the map.");
-            // ShadowlessGroundZero       = Config.Bind(category, "ShadowlessGroundZero", true, "The top half of some big buildings in Ground Zero does not have proper colliders and thus mess with Ambience Shadow calculation. If you really feel it's a big problem, enable this to address the issue.");
             VolumetricLightRenderer              = Config.Bind(category, "Observe Volumetric Lights", true, "Let Brightness Module reacts to volumetric lights. Disable this if it cause issues.");
              
             category                   = "3. Encountering Patch";
@@ -166,10 +163,6 @@ namespace ThatsLit
                                                      "Enable",
                                                      true,
                                                      new ConfigDescription("Enable the module. Encountering Patch nerf bots reaction at the moment they see a player, especially when they are sprinting.", null, new ConfigurationManagerAttributes() { Order = 100 }));
-            // VisibilityCancelChance            = Config.Bind(category,
-            //                                          "Visibility Cancel Chance",
-            //                                          0.6f,
-            //                                          new ConfigDescription("Basically, this reduce instant returning fire. When the system set you to be visible to a bot, but the bot is not even facing your way (yes this happens in some situations), at this chance That's Lit will cancel the visibility and instead only tell it it's spotted from roughly your way.", new AcceptableValueRange<float>(0, 1f), new ConfigurationManagerAttributes() { Order = 99 }));
 
             category                   = "4. Grasses & Foliage";
             EnabledGrasses             = Config.Bind(category, "Enable Grasses", true, new ConfigDescription("Enable the module. This enable grasses to block bot vision.", null, new ConfigurationManagerAttributes() { Order                                                                                    = 100 }));
@@ -210,7 +203,6 @@ namespace ThatsLit
                                                    new ConfigDescription("Vertical offset to the top.", new AcceptableValueRange<int>(0, 7)));
             InfoFontSizeOverride                 = Config.Bind(category, "Info Font Size Override", 0,
                                                    new ConfigDescription("Change font size", new AcceptableValueRange<int>(0, 32)));
-            // AlternativeMeterUnicde                  = Config.Bind(category, "Alternative Meter", false, "If somehow the GUI meters unicodes are not rendered on your system, try this options.");
 
 
             category                   = "7. Performance";
@@ -276,7 +268,6 @@ namespace ThatsLit
         public static ConfigEntry<float> FinalOffset { get; private set; }
         public static ConfigEntry<float> FinalImpactScaleDelaying { get; private set; }
         public static ConfigEntry<float> FinalImpactScaleFastening { get; private set; }
-        // public static ConfigEntry<float> VisibilityCancelChance { get; private set; }
         public static ConfigEntry<float> FoliageImpactScale { get; private set; }
         public static ConfigEntry<bool> IncludeBosses { get; private set; }
         public static ConfigEntry<bool> EnableLighthouse { get; private set; }
@@ -287,13 +278,11 @@ namespace ThatsLit
         public static ConfigEntry<bool> EnableInterchange { get; private set; }
         public static ConfigEntry<bool> EnableStreets { get; private set; }
         public static ConfigEntry<bool> EnableGroundZero { get; private set; }
-        // public static ConfigEntry<bool> EnableLab { get; private set; }
         public static ConfigEntry<bool> EnableWoods { get; private set; }
         public static ConfigEntry<bool> EnableHideout { get; private set; }
         public static ConfigEntry<bool> ShadowlessGroundZero { get; private set; }
         public static ConfigEntry<bool> ShadowlessStreets { get; private set; }
         public static ConfigEntry<bool> EnableBenchmark { get; private set; }
-        // public static ConfigEntry<bool> AlternativeMeterUnicde { get; private set; }
         public static ConfigEntry<int> ResLevel { get; private set; }
         public static ConfigEntry<int> FoliageSamples { get; private set; }
         public static ConfigEntry<bool> VolumetricLightRenderer { get; private set; }
@@ -301,29 +290,6 @@ namespace ThatsLit
         public static ConfigEntry<bool> PMCOnlyMode { get; private set; }
         public static ConfigEntry<bool> ForceBlindFireScatter { get; private set; }
         public static ConfigEntry<bool> BotLookDirectionTweaks { get; private set; }
-        // public static ConfigEntry<bool> DevMode { get; private set; }
-        // public static ConfigEntry<bool> DevModeInvisible { get; private set; }
-        // public static ConfigEntry<bool> NoGPUReq { get; private set; }
-        // public static ConfigEntry<float> OverrideMinBaseAmbienceScore { get; private set; }
-        // public static ConfigEntry<float> OverrideMaxBaseAmbienceScore { get; private set; }
-        // public static ConfigEntry<float> OverrideMinAmbienceLum { get; private set; }
-        // public static ConfigEntry<float> OverrideMaxAmbienceLum { get; private set; }
-        // public static ConfigEntry<float> OverridePixelLumScoreScale { get; private set; }
-        // public static ConfigEntry<float> OverrideMaxSunLightScore { get; private set; }
-        // public static ConfigEntry<float> OverrideMaxMoonLightScore { get; private set; }
-        // public static ConfigEntry<float> OverrideScore0 { get; private set; }
-        // public static ConfigEntry<float> OverrideScore1 { get; private set; }
-        // public static ConfigEntry<float> OverrideScore2 { get; private set; }
-        // public static ConfigEntry<float> OverrideScore3 { get; private set; }
-        // public static ConfigEntry<float> OverrideScore4 { get; private set; }
-        // public static ConfigEntry<float> OverrideScore5 { get; private set; }
-        // public static ConfigEntry<float> OverrideScore6 { get; private set; }
-        // public static ConfigEntry<float> OverrideThreshold0 { get; private set; }
-        // public static ConfigEntry<float> OverrideThreshold1 { get; private set; }
-        // public static ConfigEntry<float> OverrideThreshold2 { get; private set; }
-        // public static ConfigEntry<float> OverrideThreshold3 { get; private set; }
-        // public static ConfigEntry<float> OverrideThreshold4 { get; private set; }
-        // public static ConfigEntry<float> OverrideThreshold5 { get; private set; }
 
         private void Patches()
         {
