@@ -15,7 +15,7 @@ namespace ThatsLit
     {
         public const string Title = ModName;
         public const string Description = "One step closer to fair gameplay, by giving AIs non-perfect vision and reactions. Because we too deserve grasses, bushes and nights.";
-        public const string Configuration = SPTVersion;
+        public const string Configuration = SPTVersionMin;
         public const string Company = "";
         public const string Product = ModName;
         public const string Copyright = "Copyright \u00a9 2024 BA";
@@ -27,7 +27,11 @@ namespace ThatsLit
         public const string ModName = "That's Lit";
         public const string ModVersion = "1.3100.3";
         public const string SPTGUID = "com.SPT.core";
-        public const string SPTVersion = "4.1.0";
+        // Minimum SPT version required — BepInDependency uses this as a floor,
+        // so any 4.1.x release (4.1.0, 4.1.1, 4.1.2 …) will satisfy the constraint.
+        public const string SPTVersionMin = "4.1.0";
+        // Kept for back-compat in case other code references SPTVersion by name.
+        public const string SPTVersion = SPTVersionMin;
         private static long modVersionComparable;
 
         public static long ModVersionComparable
@@ -45,7 +49,9 @@ namespace ThatsLit
     }
 
     [BepInPlugin("bastudio.thatslit", ModName, ModVersion)]
-    [BepInDependency(SPTGUID, SPTVersion)]
+    // BepInDependency treats the version string as a *minimum* — this plugin will
+    // load with any SPT 4.1.x (4.1.0, 4.1.1, 4.1.2 …) without change.
+    [BepInDependency(SPTGUID, SPTVersionMin)]
     [BepInProcess(EscapeFromTarkov)]
     [BepInDependency("me.sol.sain", BepInDependency.DependencyFlags.SoftDependency)]
     [BepInDependency("bastudio.updatenotifier", BepInDependency.DependencyFlags.SoftDependency)]
@@ -215,96 +221,6 @@ namespace ThatsLit
             DebugInfo                  = Config.Bind(category, "Debug Info (Expensive)", false, "A lot of gibberish.");
             DebugTexture               = Config.Bind(category, "Debug Texture", false, new ConfigDescription("", null, new ConfigurationManagerAttributes() { IsAdvanced                                                                        = true }));
             EnableHideout              = Config.Bind(category, "Hideout", false, "Enable darkness/brightness on the map.");
-            EnableBenchmark              = Config.Bind(category, "Benchmark", false, "");
-            DebugTerrain               = Config.Bind(category, "Debug Terrain", false, new ConfigDescription("", null, new ConfigurationManagerAttributes() { IsAdvanced                                                                        = true }));
-            DebugCompat               = Config.Bind(category, "Debug Compat", false, new ConfigDescription("", null, new ConfigurationManagerAttributes() { IsAdvanced                                                                        = true }));
-            DebugProxy               = Config.Bind(category, "Debug Proxy", false, new ConfigDescription("", null, new ConfigurationManagerAttributes() { IsAdvanced                                                                        = true }));
-
-            category                   = "9. Balance";
-            IncludeBosses              = Config.Bind(category, "Include Bosses", false, "Should all features from this mod work for boss. Makes bosses EASY.");
-            PMCOnlyMode              = Config.Bind(category, "PMC Only Mode", false, "Requested. So the mod only affect PMCs.");
-            EnableEquipmentCheck         = Config.Bind(category, "Equipment Check", true, "Whether the mod checks your equipments. Disabling this stops lights/lasers detection and makes stealth EASY.");
-            InterruptSAINNoBush              = Config.Bind(category, "Interrupt SAIN No Bush", false, "DO NOT COMPLAIN ABOUT NO BUSH ESP TO Solarint IF YOU HAVE THIS ON. New SAIN No Bush is designed to be very aggressive, it can block bot vision even if you are just 2m away and the bot is looking straight at you. This add a chance to turn off SAIN's No Bush ESP at close range so things makes sense.");
-            ForceBlindFireScatter              = Config.Bind(category, "Force Blind Fire Scatter", true, "Force a random scatter on bot blind fireing, scaled by distance.");
-            BotLookDirectionTweaks              = Config.Bind(category, "Bot Look Direction Tweaks", true, "Try to tell the nearest bot to look towards the player when it makes sense.");
-            
-        }
-
-        public static ConfigEntry<bool> ScoreInfo { get; private set; }
-        public static ConfigEntry<bool> WeatherInfo { get; private set; }
-        public static ConfigEntry<bool> EquipmentInfo { get; private set; }
-        public static ConfigEntry<bool> TerrainInfo { get; private set; }
-        public static ConfigEntry<bool> FoliageInfo { get; private set; }
-        public static ConfigEntry<bool> DebugInfo { get; private set; }
-        public static ConfigEntry<int> InfoOffset { get; private set; }
-        public static ConfigEntry<int> InfoFontSizeOverride { get; private set; }
-        public static ConfigEntry<bool> HideMapTip { get; private set; }
-        public static ConfigEntry<bool> DebugTexture { get; private set; }
-        public static ConfigEntry<bool> DebugTerrain { get; private set; }
-        public static ConfigEntry<bool> DebugCompat { get; private set; }
-        public static ConfigEntry<bool> DebugProxy { get; private set; }
-        public static ConfigEntry<bool> EnabledMod { get; private set; }
-        public static ConfigEntry<bool> EnabledLighting { get; private set; }
-        public static ConfigEntry<bool> EnabledCameraThrottling { get; private set; }
-        public static ConfigEntry<bool> EnabledEncountering { get; private set; }
-        public static ConfigEntry<bool> EnabledFoliage { get; private set; }
-        public static ConfigEntry<bool> EnabledGrasses { get; private set; }
-        public static ConfigEntry<bool> EnabledBushRatting { get; private set; }
-        public static ConfigEntry<bool> EnableMovementImpact { get; private set; }
-        public static ConfigEntry<bool> EnableEquipmentCheck { get; private set; }
-        public static ConfigEntry<bool> EnableSimFreeLook { get; private set; }
-        public static ConfigEntry<bool> EnableBodyPartsRecognition { get; private set; }
-        public static ConfigEntry<bool> EnableNearestBotSteering { get; private set; }
-        public static ConfigEntry<bool> EnableExtraFlashLightReaction { get; private set; }
-        public static ConfigEntry<bool> AlternativeReactionFluctuation { get; private set; }
-        public static ConfigEntry<float> ScoreOffset { get; private set; }
-        public static ConfigEntry<float> DarknessImpactScaleOffset { get; private set; }
-        public static ConfigEntry<float> BrightnessImpactScaleOffset { get; private set; }
-        public static float DarknessImpactScale => DarknessImpactScaleOffset.Value * 2f;
-        public static float BrightnessImpactScale => BrightnessImpactScaleOffset.Value * 2f;
-        public static ConfigEntry<float> ExtraDarknessImpactScale { get; private set; }
-        public static ConfigEntry<float> ExtraBrightnessImpactScale { get; private set; }
-        public static ConfigEntry<float> ExtraVisionDistanceScale { get; private set; }
-        public static ConfigEntry<float> FinalOffset { get; private set; }
-        public static ConfigEntry<float> FinalImpactScaleDelaying { get; private set; }
-        public static ConfigEntry<float> FinalImpactScaleFastening { get; private set; }
-        public static ConfigEntry<float> FoliageImpactScale { get; private set; }
-        public static ConfigEntry<bool> IncludeBosses { get; private set; }
-        public static ConfigEntry<bool> EnableLighthouse { get; private set; }
-        public static ConfigEntry<bool> EnableFactoryNight { get; private set; }
-        public static ConfigEntry<bool> EnableReserve { get; private set; }
-        public static ConfigEntry<bool> EnableCustoms { get; private set; }
-        public static ConfigEntry<bool> EnableShoreline { get; private set; }
-        public static ConfigEntry<bool> EnableInterchange { get; private set; }
-        public static ConfigEntry<bool> EnableStreets { get; private set; }
-        public static ConfigEntry<bool> EnableGroundZero { get; private set; }
-        public static ConfigEntry<bool> EnableWoods { get; private set; }
-        public static ConfigEntry<bool> EnableHideout { get; private set; }
-        public static ConfigEntry<bool> ShadowlessGroundZero { get; private set; }
-        public static ConfigEntry<bool> ShadowlessStreets { get; private set; }
-        public static ConfigEntry<bool> EnableBenchmark { get; private set; }
-        public static ConfigEntry<int> ResLevel { get; private set; }
-        public static ConfigEntry<int> FoliageSamples { get; private set; }
-        public static ConfigEntry<bool> VolumetricLightRenderer { get; private set; }
-        public static ConfigEntry<bool> InterruptSAINNoBush { get; private set; }
-        public static ConfigEntry<bool> PMCOnlyMode { get; private set; }
-        public static ConfigEntry<bool> ForceBlindFireScatter { get; private set; }
-        public static ConfigEntry<bool> BotLookDirectionTweaks { get; private set; }
-
-        private void Patches()
-        {
-            new SeenCoefPatch().Enable();
-            new EncounteringPatch().Enable();
-            new ExtraVisibleDistancePatch().Enable();
-            new InitiateShotMonitor().Enable();
-            new BlindFirePatch().Enable();
-            if (SAINLoaded)
-                new SAINNoBushOverride().Enable();
-        }
-
-        private void Update()
-        {
-            GameWorldHandler.Update();
         }
     }
 }
